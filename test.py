@@ -3,11 +3,11 @@ import tri_interpolate
 
 
 if __name__ == '__main__':
-    if torch.cuda.is_available():
-        device = torch.device('cuda')
+    N = 65536
+    F = 256
 
-    feats = torch.ones(2).to(device)
-    point = torch.zeros(2).to(device)
+    feats = torch.rand(N, 8, F, device='cuda')
+    point = torch.rand(1024, 3, device='cuda')*2-1
 
     out = tri_interpolate.trilinear_interpolate(feats, point)
-    print(out)
+    print(out.shape)
