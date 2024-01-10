@@ -1,5 +1,6 @@
 import torch
 import tri_interpolate
+import time
 
 
 def trilinear_interpolation_py(feats, points):
@@ -32,13 +33,19 @@ def trilinear_interpolation_py(feats, points):
 
 
 if __name__ == '__main__':
-    N = 65536
+    N = 2**16
     F = 256
 
     feats = torch.rand(N, 8, F, device='cuda')
     point = torch.rand(N, 3, device='cuda')*2-1
 
+    t = time.time()
     out_cuda = tri_interpolate.trilinear_interpolate(feats, point)
+    torch.cuda.synchronize()
+    print('CUDA time: ', time.time()-t)
+
+    t = time.time()
     out_torch = trilinear_interpolation_py(feats, point)
+    print('Pytorch time: ', time.time()-t)
 
     print(torch.allclose(out_cuda, out_torch))
